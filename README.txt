@@ -1,0 +1,1 @@
+Finexia App - Full System (registration, login, roles, tasks, notifications)
