@@ -1,43 +1,27 @@
-import { useState } from 'react';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../firebaseConfig';
-import { useRouter } from 'next/router';
+import { useState } from "react";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { useRouter } from "next/router";
 
-export default function LoginPage() {
+export default function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
+  const handleLogin = async () => {
+    const auth = getAuth();
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      router.push('/dashboard');
-    } catch (err) {
-      setError('Błędny e-mail lub hasło.');
+      router.push("/dashboard");
+    } catch (error) {
+      alert("Błąd logowania");
     }
   };
 
   return (
-    <div style={{ padding: '2rem', fontFamily: 'Arial' }}>
-      <h2>Logowanie do Finexia</h2>
-      <form onSubmit={handleLogin}>
-        <input
-          type="email"
-          placeholder="E-mail"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        /><br /><br />
-        <input
-          type="password"
-          placeholder="Hasło"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        /><br /><br />
-        <button type="submit">Zaloguj</button>
-      </form>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+    <div className="p-8">
+      <input className="border p-2 m-2" type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+      <input className="border p-2 m-2" type="password" placeholder="Hasło" value={password} onChange={(e) => setPassword(e.target.value)} />
+      <button className="bg-blue-500 text-white p-2 m-2" onClick={handleLogin}>Zaloguj</button>
     </div>
   );
 }

@@ -1,9 +1,8 @@
-
 export default function Home() {
   return (
-    <div style={{ padding: '2rem', fontFamily: 'Arial' }}>
-      <h1>Finexia działa! 🚧 (v2)</h1>
-      <p>Twoja aplikacja budowlana jest gotowa do instalacji jako PWA.</p>
+    <div className="p-8 font-sans">
+      <h1 className="text-2xl font-bold">Finexia działa!</h1>
+      <p className="mt-2">To Twoja aplikacja budowlana online.</p>
     </div>
   );
 }
