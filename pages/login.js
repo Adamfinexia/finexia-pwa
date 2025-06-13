@@ -1,27 +1,39 @@
-import { useState } from "react";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import { useRouter } from "next/router";
+import { useState, useEffect } from 'react';
+import { signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
+import { useRouter } from 'next/router';
+import { auth } from '../firebaseConfig';
 
-export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+export default function LoginPage() {
   const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
-  const handleLogin = async () => {
-    const auth = getAuth();
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) router.push('/dashboard');
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      router.push("/dashboard");
-    } catch (error) {
-      alert("Błąd logowania");
+    } catch (err) {
+      setError('Błędny e-mail lub hasło.');
     }
   };
 
   return (
-    <div className="p-8">
-      <input className="border p-2 m-2" type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-      <input className="border p-2 m-2" type="password" placeholder="Hasło" value={password} onChange={(e) => setPassword(e.target.value)} />
-      <button className="bg-blue-500 text-white p-2 m-2" onClick={handleLogin}>Zaloguj</button>
+    <div style={{ padding: '2rem', fontFamily: 'Arial' }}>
+      <h2>Logowanie do Finexia</h2>
+      <form onSubmit={handleLogin}>
+        <input type="email" placeholder="E-mail" value={email} onChange={(e) => setEmail(e.target.value)} /><br /><br />
+        <input type="password" placeholder="Hasło" value={password} onChange={(e) => setPassword(e.target.value)} /><br /><br />
+        <button type="submit">Zaloguj</button>
+      </form>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
     </div>
   );
 }
