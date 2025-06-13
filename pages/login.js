@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../firebaseConfig.js'
+import { auth } from '../firebaseConfig';
 import { useRouter } from 'next/router';
 
 export default function LoginPage() {
