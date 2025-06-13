@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from 'next/router';
-import { auth } from '../firebaseConfig';
+import { auth } from '../lib/firebase';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -10,10 +10,9 @@ export default function LoginPage() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, user => {
       if (user) router.push('/dashboard');
     });
-    return () => unsubscribe();
   }, []);
 
   const handleLogin = async (e) => {
@@ -21,19 +20,16 @@ export default function LoginPage() {
     try {
       await signInWithEmailAndPassword(auth, email, password);
     } catch (err) {
-      setError('Błędny e-mail lub hasło.');
+      setError('Invalid credentials');
     }
   };
 
   return (
-    <div style={{ padding: '2rem', fontFamily: 'Arial' }}>
-      <h2>Logowanie do Finexia</h2>
-      <form onSubmit={handleLogin}>
-        <input type="email" placeholder="E-mail" value={email} onChange={(e) => setEmail(e.target.value)} /><br /><br />
-        <input type="password" placeholder="Hasło" value={password} onChange={(e) => setPassword(e.target.value)} /><br /><br />
-        <button type="submit">Zaloguj</button>
-      </form>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-    </div>
+    <form onSubmit={handleLogin}>
+      <input type="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
+      <input type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
+      <button type="submit">Login</button>
+      {error && <p>{error}</p>}
+    </form>
   );
 }
